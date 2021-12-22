@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { finalize, map, Observable } from 'rxjs';
 import { Player, PlayerApiService } from './player-api.service';
 
 @Component({
@@ -8,18 +8,28 @@ import { Player, PlayerApiService } from './player-api.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  public persons$: Observable<Player[]> = this.playerApiService
+  public players$: Observable<Player[]> = this.playerApiService
     .getPlayers()
     .pipe(
-      map((persons) =>
-        persons.map((person) => ({
-          ...person,
+      map((players) =>
+        players.map((player) => ({
+          ...player,
           age:
             new Date().getFullYear() -
-            new Date(person.dateOfBirth).getFullYear(),
+            new Date(player.dateOfBirth).getFullYear(),
         }))
-      )
+      ),
+      finalize(() => console.log('Best Practice completed'))
     );
 
-   constructor(private playerApiService: PlayerApiService) {}
+  public players?: Player[];
+
+  constructor(private playerApiService: PlayerApiService) {
+    this.playerApiService.getPlayers().subscribe({
+      next: (players) => {
+        this.players = players;
+      },
+      complete: () => console.log('Worse Practise completed'),
+    });
+  }
 }

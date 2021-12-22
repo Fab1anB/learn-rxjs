@@ -1,16 +1,5 @@
-<table>
-  <thead>
-    <tr>
-      <td>Name</td>
-      <td>Firstname</td>
-      <td>Age</td>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let person of persons$ | async">
-      <td>{{person.firstname}} </td>
-      <td> {{ person.lastname }} </td>
-      <td> {{ person.age }} </td>
-    </tr>
-  </tbody>
-</table>
+<nav>
+  <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+  <a class="nav-item" routerLink="/player-management" routerLinkActive="active">Player Management</a>
+</nav>
+<router-outlet></router-outlet>

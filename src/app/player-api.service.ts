@@ -1,26 +1,28 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 
 export interface Player {
   firstname: string;
   lastname: string;
   dateOfBirth: string;
-  age?: number;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayerApiService {
+
+  public players = new BehaviorSubject(playersMock);
+
   public getPlayers(): Observable<Player[]> {
-    return of(personsMock);
+    return this.players.asObservable();
   }
 
   constructor() {}
 }
 
-const personsMock: Player[] = [
+const playersMock: Player[] = [
   {
     firstname: 'Thomas',
     lastname: 'Müller',
@@ -30,5 +32,5 @@ const personsMock: Player[] = [
     firstname: 'Joshua',
     lastname: 'Kimmich',
     dateOfBirth: '02/08/1995',
-  },
+  }
 ];
