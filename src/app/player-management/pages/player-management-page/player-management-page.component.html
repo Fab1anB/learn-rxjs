@@ -1,0 +1,31 @@
+
+<h2>Player Management Table</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Firstname</th>
+      <th>Lastname</th>
+      <th>Age</th>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngIf="players$ | async as players">
+      <tr *ngFor="let player of players">
+        <td>{{ player.firstname }}</td>
+        <td>{{ player.lastname }}</td>
+        <td>{{ player.dateOfBirth.toLocaleDateString() }}</td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
+<hr>
+<h2>Add player</h2>
+<form [formGroup]="formGroup">
+  <label>Firstname</label>
+  <input type="text" [formControlName]="'firstname'"><br>
+  <label>Lastname</label>
+  <input type="text" [formControlName]="'lastname'"><br>
+  <label>Date of birth</label>
+  <input type="date" [formControlName]="'dateOfBirth'">
+</form>
+<button (click)="addPlayer()">Add player</button>

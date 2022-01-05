@@ -1,0 +1,4 @@
+<div *ngIf="playerViewModel$ | async as playerViewModel">
+  {{ playerViewModel.firstname }}, {{ playerViewModel.lastname }} 
+  Age:{{ playerViewModel.age }}
+</div>
