@@ -5,10 +5,13 @@ import {
   combineLatestWith,
   firstValueFrom,
   map,
+  Observable,
   startWith,
   Subject,
   switchMap,
+  tap,
 } from 'rxjs';
+import { Player } from 'src/app/dashboard/models/player';
 import { logObservable } from 'src/app/shared/utils/log-observable';
 import { updater } from 'src/app/shared/utils/updater';
 import { PlayerManagementApiService } from '../../services/player-management-api.service';
@@ -19,14 +22,15 @@ import { PlayerManagementApiService } from '../../services/player-management-api
   styleUrls: ['./player-management-page.component.scss'],
 })
 export class PlayerManagementPageComponent {
-  public navigationItem$ = new BehaviorSubject(1);
+  public navigationItem$ = new BehaviorSubject(1337);
 
   private updater$ = new Subject<void>();
 
-  public players$ = this.navigationItem$.pipe(
-    logObservable('#1'),
-    updater(this.updater$),
-    logObservable('#2'),
+  public players$: Observable<Player []> = this.navigationItem$.pipe(
+    tap( () => console.log('#1')),
+    combineLatestWith(this.updater$.pipe(startWith(null))),
+    map(([a, _]) => a),
+    tap( () => console.log('#2')),
     switchMap((clubId) => this.playerManagementApiService.getPlayers(clubId))
   );
 
