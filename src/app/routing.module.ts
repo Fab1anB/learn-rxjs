@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router'; // CLI imports router
 import { DashboardPageComponent } from './dashboard/pages/dashboard-page/dashboard-page.component';
-import { PlayerManagementPageComponent } from './player-management/pages/player-management-page/player-management-page.component';
 
 
 
 const routes: Routes = [
   { path: 'dashboard', component: DashboardPageComponent },
- { path: 'player-management', component: PlayerManagementPageComponent },
   {path: '', component: DashboardPageComponent},
   { path: '**', component: DashboardPageComponent },
 ];

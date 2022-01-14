@@ -1,0 +1,16 @@
+<div class="d-flex align-items-center flex-column">
+  <h4>Monthly Balance</h4>
+  <ngx-gauge
+    *ngIf="monthlyBalance$ | async as monthlyBalance"
+    [value]="monthlyBalance"
+    [label]="'Dollar'"
+    [type]="'arch'"
+    [max]="30000"
+    [thick]="16"
+    [thresholds]="{
+      '0': { color: 'red' },
+      '1000': { color: 'orange' },
+      '2500': { color: 'green' }
+    }"
+  ></ngx-gauge>
+</div>

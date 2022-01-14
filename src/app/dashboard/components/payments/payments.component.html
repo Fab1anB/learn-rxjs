@@ -1,0 +1,14 @@
+<ng-container *ngIf="payments$ | async as payments">
+  <h4>Payments</h4>
+  <div class="d-flex flex-row justify-content-between h-100 expenses-container">
+    <div
+      class="d-flex flex-column widget-border-light w-50 align-items-center justify-content-center flex-wrap"
+      *ngFor="let payment of payments"
+    >
+      <img class="mb-4" alt="" width="64" height="64" src="assets/images/{{payment.icon}}.png">
+      <h4 class="text-center mb-2">{{ payment.type }}</h4>
+      <span class="text-center font-lighter mb-2">{{ payment.account }}</span>
+      <span class="text-center font-lighter ">{{ payment.value }} $</span>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,44 @@
+<div
+  *ngIf="{
+    dataSource: dataSource$ | async,
+    isPositive: sharePriceService.isPositive$ | async
+  } as ctx"
+>
+  <h4>Share& Crypto live values</h4>
+  <table *ngIf="ctx.dataSource" mat-table [dataSource]="ctx.dataSource">
+    <ng-container matColumnDef="share">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <div class="table-title-with-icon space-around mr-4">
+          <img
+            alt=""
+            [src]="'assets/images/' + element.icon + '.png'"
+            width="24"
+            height="24"
+          />
+          <div class="d-flex flex-column">
+            <b>{{ element.share }}</b>
+            <span class="font-lighter">{{ element.wkn }}</span>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="value">
+      <th mat-header-cell class="pl-2" *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <div class="d-flex flex-column">
+          <b>{{ element.value }} $</b>
+          <span
+            [ngClass]="ctx.isPositive ? 'positive' : 'negative'"
+            class="font-lighter"
+          >
+            {{ ctx.isPositive ? "+" : "-" }}0,5%
+          </span>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>
