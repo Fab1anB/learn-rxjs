@@ -1,7 +1,6 @@
 <div
   *ngIf="{
-    dataSource: dataSource$ | async,
-    isPositive: sharePriceService.isPositive$ | async
+    dataSource: dataSource$ | async
   } as ctx"
 >
   <h4>Share& Crypto live values</h4>
@@ -30,10 +29,11 @@
         <div class="d-flex flex-column">
           <b>{{ element.value }} $</b>
           <span
-            [ngClass]="ctx.isPositive ? 'positive' : 'negative'"
+            [class.positive]="element.diff > 0"
+            [class.negative]="element.diff < 0"
             class="font-lighter"
           >
-            {{ ctx.isPositive ? "+" : "-" }}0,5%
+            {{ element.diff === 0 ? '-' : element.diff }}%
           </span>
         </div>
       </td>

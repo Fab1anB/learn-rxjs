@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import {mapTo, Observable, scan} from 'rxjs';
+import { map, Observable, scan, switchMap, tap, timer } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Share } from '../models/share';
+import { Share, ShareView } from '../models/share';
+import { log10 } from 'chart.js/helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -9,27 +10,20 @@ import { Share } from '../models/share';
 export class SharePriceService {
   private url = 'http://localhost:4200/shares-live';
 
-  public sharePrice$: Observable<Share[]> = this.getSharePrice();
+  public sharePrice$: Observable<Share[]> = timer(0, 5_000).pipe(
+    switchMap(() => this.getSharePrice())
+  );
 
-  public isPositive$ = this.sharePrice$.pipe(
-    scan((acc, curr) => {
-      let shareChangeMapping = curr.map((share) => {
-        const currentShare = acc.find((x) => (x.wkn = share.wkn));
-        if(!currentShare) {
-          return null;
-        }
-        console.log("-> currentShare", currentShare);
-        return {
-          isPositive: share.value > currentShare!.value,
-          diff: Math.abs(share.value - currentShare!.value),
-        };
-      });
-      console.log('-> curr', curr);
-      console.log('-> acc', acc);
-      acc = curr;
-      return curr;
-    }, [] as Share[]),
-    mapTo(true)
+  public shareViews$: Observable<ShareView[]> = this.sharePrice$.pipe(
+    scan((acc: Share[][], curr) => {
+      acc.push(curr);
+      return acc;
+    }, []),
+    map((sharesList) => {
+      const dayStartValues = sharesList[0];
+      const currentValues = sharesList[sharesList.length - 1];
+      return calculateShareViewValues(dayStartValues, currentValues);
+    }),
   );
 
   constructor(private http: HttpClient) {}
@@ -37,4 +31,23 @@ export class SharePriceService {
   public getSharePrice(): Observable<Share[]> {
     return this.http.get<Share[]>(this.url);
   }
+}
+
+function calculateShareViewValues(
+  dayStartValues: Share[],
+  currentValues: Share[]
+) {
+  return currentValues.reduce((acc: ShareView[], curr) => {
+    const startValueOfAShare = dayStartValues.find(
+      (share) => share.wkn === curr.wkn
+    );
+    const shareView: ShareView = {
+      ...curr,
+      diff:
+        +((curr.value - (startValueOfAShare?.value ?? 0)) /
+        (startValueOfAShare?.value ?? 1)).toFixed(2),
+    };
+    acc.push(shareView);
+    return acc;
+  }, [] as ShareView[]);
 }

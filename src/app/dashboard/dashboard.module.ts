@@ -13,6 +13,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {NgxGaugeModule} from "ngx-gauge";
 import {NgChartsModule} from "ng2-charts";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatSelectModule} from "@angular/material/select";
 
 
 @NgModule({
@@ -33,6 +35,8 @@ import {NgChartsModule} from "ng2-charts";
     MatMenuModule,
     NgxGaugeModule,
     NgChartsModule,
+    MatFormFieldModule,
+    MatSelectModule,
 
   ]
 })

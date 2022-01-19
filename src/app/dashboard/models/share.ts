@@ -4,3 +4,8 @@ export interface Share {
   icon: string;
   wkn: string;
 }
+
+
+export type ShareView = Share & {
+  diff: number | null;
+}

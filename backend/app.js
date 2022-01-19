@@ -87,100 +87,53 @@ app.get("/profits", (req, res) => {
 
 // expenses
 
-let expensesDatabase = [
-  {
-    title: "Walmart",
-    date: new Date(),
-    amount: 66,
-    type: "food",
-  },
-  {
-    title: "Beer",
-    date: addDays(new Date(), 2),
-    amount: 23,
-    type: "drink",
-  },
-  {
-    title: "TV",
-    date: new Date(),
-    amount: 444,
-    type: "equipment",
-  },
-  {
-    title: "Toothbrush",
-    date: addDays(new Date(), 3),
-    amount: 3,
-    type: "care",
-  },
-  {
-    title: "Pizza",
-    date: addDays(new Date(), -1),
-    amount: 13,
-    type: "food",
-  },
-  // Month -1
-  {
-    title: "ALDI",
-    date: addMonths(addDays(new Date(), 10), -1),
-    amount: 27.45,
-    type: "food",
-  },
-  {
-    title: "Beer",
-    date: addMonths(addDays(new Date(), 7), -1),
-    amount: 21.12,
-    type: "drink",
-  },
-  {
-    title: "iPhone",
-    date: addMonths(addDays(new Date(), -2), -1),
-    amount: 1300,
-    type: "equipment",
-  },
-  {
-    title: "Cream",
-    date: addMonths(new Date(), -1),
-    amount: 12.99,
-    type: "care",
-  },
-  {
-    title: "Spaghetti",
-    date: addMonths(new Date(), -1),
-    amount: 11.5,
-    type: "food",
-  },
-  // Month +2
-  {
-    title: "Donuts",
-    date: addMonths(addDays(new Date(), 11), 2),
-    amount: 27.45,
-    type: "food",
-  },
-  {
-    title: "Limo",
-    date: addMonths(addDays(new Date(), 9), 2),
-    amount: 21.12,
-    type: "drink",
-  },
-  {
-    title: "MacBook",
-    date: addMonths(addDays(new Date(), 2), 2),
-    amount: 1300,
-    type: "equipment",
-  },
-  {
-    title: "Laundry detergent",
-    date: addMonths(new Date(), 3),
-    amount: 12.99,
-    type: "care",
-  },
-  {
-    title: "Shellfisch",
-    date: addMonths(new Date(), 2),
-    amount: 11.5,
-    type: "food",
-  },
+function generateExpense(title, month, maxAmount, type, date) {
+  return {
+    title: title,
+    month,
+    amount: +((maxAmount / 4 + (Math.random() * maxAmount)).toFixed(0)),
+    type,
+    date,
+  };
+}
+
+const expenseTypes = [
+  { title: "Pasta", type: "food", maxAmount: 15 },
+  { title: "Walmart", type: "food", maxAmount: 150 },
+  { title: "Pizza", type: "food", maxAmount: 15 },
+  { title: "Donuts", type: "food", maxAmount: 10 },
+  { title: "Beer", type: "drink", maxAmount: 20 },
+  { title: "Water", type: "drink", maxAmount: 10 },
+  { title: "Soda", type: "drink", maxAmount: 15 },
+  { title: "Cola", type: "drink", maxAmount: 15 },
+  { title: "TV", type: "equipment", maxAmount: 1000 },
+  { title: "iPhone", type: "equipment", maxAmount: 1300 },
+  { title: "MacBook", type: "equipment", maxAmount: 4000 },
+  { title: "Tablet", type: "equipment", maxAmount: 200 },
+  { title: "Toothbrush", type: "care", maxAmount: 10 },
+  { title: "Cream", type: "care", maxAmount: 20 },
+  { title: "Shampoo", type: "care", maxAmount: 4 },
+  { title: "Deo", type: "care", maxAmount: 5 },
 ];
+
+function generateExpenseForMonth(month) {
+  return Array(8)
+    .fill("")
+    .map(() => {
+      const randomDay = +(Math.random() * 27).toFixed(0) + 1;
+      const date = new Date(new Date().setDate(randomDay)).setMonth(month);
+      const index = +Math.abs(Math.random() * expenseTypes.length - 1).toFixed(
+        0
+      );
+      const { title, type, maxAmount } = expenseTypes[index];
+      return generateExpense(title, month, maxAmount, type, date);
+    });
+}
+let i = 0;
+let expensesDatabase = Array(12)
+  .fill("")
+  .map(() => i++)
+  .flatMap((month) => generateExpenseForMonth(month));
 
 app.get("/expenses", (req, res) => {
   res.send(expensesDatabase);
@@ -200,6 +153,6 @@ app.delete("/expenses", (req, res) => {
 
 app.listen(port, () => {
   console.log(
-    `RxJS earning dashboard app listening at http://localhost:${port}`
+    `RxJS learning dashboard app listening at http://localhost:${port}`
   );
 });
