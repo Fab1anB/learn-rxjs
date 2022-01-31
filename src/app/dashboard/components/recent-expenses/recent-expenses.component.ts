@@ -3,9 +3,8 @@ import { Observable } from 'rxjs';
 import { ExpenseView } from '../../models/expenses';
 import { RecentExpensesService } from '../../services/recent-expenses.service';
 import { expenseIconMapping } from '../../utils/expense-icon-mapping';
-import { MatOptionSelectionChange } from '@angular/material/core';
-import {MONTHS} from "../../constants/months.constant";
-import {MatSelectChange} from "@angular/material/select";
+import { MONTHS } from '../../constants/months.constant';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-recent-expenses',
@@ -29,4 +28,10 @@ export class RecentExpensesComponent implements OnInit {
   public onMonthSelected(event: MatSelectChange) {
     this.recentExpensesService.onMonthSelected$.next(event.source.value);
   }
+
+  public onDeleteExpense(expenseView: ExpenseView) {
+    this.recentExpensesService.deleteExpense.next(expenseView)
+  }
+
+  public onAddExpense(): void {}
 }

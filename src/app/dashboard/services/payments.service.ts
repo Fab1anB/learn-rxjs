@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Payment } from '../models/payment';
 
@@ -9,7 +9,11 @@ import { Payment } from '../models/payment';
 export class PaymentsService {
   private url = 'http://localhost:4200/profits';
 
-  public payments$ = this.getPayments();
+  public payments$ = this.getPayments().pipe(
+    map((payments) =>
+      payments.filter((payment) => payment.month === new Date().getMonth())
+    )
+  );
 
   constructor(private http: HttpClient) {}
 

@@ -6,9 +6,11 @@ import {
   filter,
   map,
   Observable,
+  startWith,
   Subject,
+  switchMap,
 } from 'rxjs';
-import { Expense } from '../models/expenses';
+import { Expense, ExpenseView } from '../models/expenses';
 import { MONTHS } from '../constants/months.constant';
 
 @Injectable({
@@ -17,7 +19,16 @@ import { MONTHS } from '../constants/months.constant';
 export class RecentExpensesService {
   private url = 'http://localhost:4200/expenses';
 
-  public recentExpenses$: Observable<Expense[]> = this.getExpenses();
+  public deleteExpense = new Subject<ExpenseView>();
+
+  private deleteExpense$ = this.deleteExpense
+    .asObservable()
+    .pipe(switchMap((expenseView) => this.deleteExpenses(expenseView)));
+
+  public recentExpenses$: Observable<Expense[]> = this.deleteExpense$.pipe(
+    startWith(null),
+    switchMap(() => this.getExpenses())
+  );
 
   public onMonthSelected$ = new BehaviorSubject('January');
 
@@ -28,21 +39,27 @@ export class RecentExpensesService {
     ),
   ]).pipe(
     map(([expenses, selectedMonth]) => {
-       return  expenses
-          .filter((expense: Expense) => new Date(expense.date).getMonth() === selectedMonth)
-          .map((expense: Expense) => {
-            return {
-              ...expense,
-              date: new Date(expense.date).toLocaleDateString(),
-            };
-          })
-      }
-    )
+      return expenses
+        .filter(
+          (expense: Expense) =>
+            new Date(expense.date).getMonth() === selectedMonth
+        )
+        .map((expense: Expense) => {
+          return {
+            ...expense,
+            date: new Date(expense.date).toLocaleDateString(),
+          };
+        });
+    })
   );
 
   constructor(private http: HttpClient) {}
 
   public getExpenses(): Observable<Expense[]> {
     return this.http.get<Expense[]>(this.url);
+  }
+
+  public deleteExpenses(expenseView: ExpenseView): Observable<void> {
+    return this.http.delete<void>(this.url, { body: expenseView });
   }
 }

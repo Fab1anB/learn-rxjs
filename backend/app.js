@@ -1,5 +1,9 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+
 const port = 3000;
 
 function addDays(date, days) {
@@ -70,16 +74,30 @@ app.get("/share-profits", (req, res) => {
 });
 
 // profits
+let profitsIndex = 0;
+const profitsDatabase = Array(12)
+  .fill("")
+  .map(() => profitsIndex++)
+  .flatMap((month) => generateProfitsForMonth(month));
 
-const profitsDatabase = [
-  {
-    type: "Salary",
-    value: 4500,
-    account: "Bank Account",
-    icon: "bank-account",
-  },
-  { type: "Freelance services", value: 505, account: "PayPal", icon: "paypal" },
-];
+function generateProfitsForMonth(month) {
+  return (
+    [{
+      month: month,
+      type: "Salary",
+      value: 3200,
+      account: "Bank Account",
+      icon: "bank-account",
+    },
+    {
+      month: month,
+      type: "Freelance services",
+      value: +(500 + Math.random() * 300).toFixed(0),
+      account: "PayPal",
+      icon: "paypal",
+    }]
+  );
+}
 
 app.get("/profits", (req, res) => {
   res.send(profitsDatabase);
@@ -91,7 +109,7 @@ function generateExpense(title, month, maxAmount, type, date) {
   return {
     title: title,
     month,
-    amount: +((maxAmount / 4 + (Math.random() * maxAmount)).toFixed(0)),
+    amount: +(maxAmount / 4 + Math.random() * maxAmount).toFixed(0),
     type,
     date,
   };
@@ -129,10 +147,10 @@ function generateExpenseForMonth(month) {
       return generateExpense(title, month, maxAmount, type, date);
     });
 }
-let i = 0;
+let expenseIndex = 0;
 let expensesDatabase = Array(12)
   .fill("")
-  .map(() => i++)
+  .map(() => expenseIndex++)
   .flatMap((month) => generateExpenseForMonth(month));
 
 app.get("/expenses", (req, res) => {
@@ -141,13 +159,17 @@ app.get("/expenses", (req, res) => {
 
 app.post("/expenses", (req, res) => {
   expensesDatabase.push(req.body);
-  res.send(req.body);
+  res.send(expensesDatabase);
 });
 
 app.delete("/expenses", (req, res) => {
-  expensesDatabase = expensesDatabase.filter(
-    (expense) => expense.title !== req.body.title
-  );
+  expensesDatabase = [
+    ...expensesDatabase.filter((expense) => {
+      return (
+        expense.title !== req.body.title && expense.amount !== req.body.amount
+      );
+    }),
+  ];
   res.send(200);
 });
 

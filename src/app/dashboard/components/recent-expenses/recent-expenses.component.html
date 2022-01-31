@@ -4,13 +4,10 @@
     <mat-form-field appearance="legacy">
       <mat-label>Month</mat-label>
       <mat-select
-          (selectionChange)="onMonthSelected($event)"
-          [value]="months[0]"
+        (selectionChange)="onMonthSelected($event)"
+        [value]="months[0]"
       >
-        <mat-option
-          *ngFor="let month of months"
-          [value]="month"
-        >
+        <mat-option *ngFor="let month of months" [value]="month">
           {{ month }}
         </mat-option>
       </mat-select>
@@ -54,6 +51,7 @@
           mat-icon-button
           aria-label="Example icon button with a vertical three dot icon"
           [matMenuTriggerFor]="menu"
+          [matMenuTriggerData]="{element: element}"
         >
           <mat-icon>more_vert</mat-icon>
         </button>
@@ -65,8 +63,10 @@
 </div>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item>
-    <mat-icon>delete</mat-icon>
-    <span>Delete</span>
-  </button>
+  <ng-template matMenuContent let-element="element">
+    <button mat-menu-item (click)="onDeleteExpense(element)">
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-template>
 </mat-menu>
