@@ -9,7 +9,7 @@ import { PaymentsService } from '../../services/payments.service';
   styleUrls: [],
 })
 export class PaymentsComponent implements OnInit {
-  public payments$: Observable<Payment[]> = this.paymentsService.payments$;
+  public paymentsOfCurrentMonth$: Observable<Payment[]> = this.paymentsService.paymentsOfCurrentMonth$;
 
   constructor(private paymentsService: PaymentsService) {}
 

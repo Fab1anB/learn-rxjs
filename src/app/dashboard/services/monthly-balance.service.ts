@@ -13,7 +13,7 @@ export class MonthlyBalanceService {
   public monthlyBalance$ = combineLatest([
     combineLatest([
       this.sharePriceService.sharePrice$,
-      this.paymentsService.payments$,
+      this.paymentsService.paymentsOfCurrentMonth$,
     ]).pipe(
       map(([shares, payments]) =>
         shares // cumulate income shares + payments
